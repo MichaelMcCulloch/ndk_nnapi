@@ -18,6 +18,7 @@ pub mod looper;
 pub mod media;
 pub mod native_activity;
 pub mod native_window;
+pub mod neural;
 pub mod surface_texture;
 pub mod trace;
 mod utils;

@@ -223,8 +223,6 @@ impl Asset {
             }
         }
     }
-
-    //pub fn open_file_descriptor(&self) -> TODO
 }
 
 impl io::Read for Asset {
