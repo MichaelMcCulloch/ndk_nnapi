@@ -1,13 +1,9 @@
-use crate::hardware_buffer::HardwareBuffer;
 use ffi::{size_t, ANeuralNetworksDevice};
 use num_enum::{IntoPrimitive, TryFromPrimitive};
-use std::{
-    convert::TryFrom,
-    os::raw::{c_int, c_void},
-    ptr::NonNull,
-};
+use std::{convert::TryFrom, mem::size_of, os::raw::c_void, ptr::NonNull};
 
-use std::mem::size_of;
+#[cfg(feature = "api-level-26")]
+use crate::hardware_buffer::HardwareBuffer;
 
 pub trait BufferData: Sized {
     fn as_raw_ptr(&self) -> *const c_void;
@@ -1185,7 +1181,7 @@ impl NeuralNetworksMemory {
             Ok(())
         }
     }
-
+    #[cfg(feature = "api-level-26")]
     pub fn create_from_hardware_buffer(
         hardware_buffer: &HardwareBuffer,
     ) -> Result<Self, ResultCode> {
