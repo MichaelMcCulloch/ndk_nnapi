@@ -5,6 +5,7 @@ use std::{convert::TryFrom, mem::size_of, os::raw::c_void, ptr::NonNull};
 #[cfg(feature = "api-level-26")]
 use crate::hardware_buffer::HardwareBuffer;
 
+#[cfg(feature = "api-level-29")]
 pub trait BufferData: Sized {
     fn as_raw_ptr(&self) -> *const c_void;
     fn byte_size() -> usize {
@@ -21,6 +22,7 @@ impl<T> BufferData for T {
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, TryFromPrimitive, IntoPrimitive)]
+#[cfg(feature = "api-level-29")]
 pub enum OperandCode {
     Float32 = ffi::OperandCode::ANEURALNETWORKS_FLOAT32.0,
     Int32 = ffi::OperandCode::ANEURALNETWORKS_INT32.0,
@@ -41,6 +43,7 @@ pub enum OperandCode {
 }
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, TryFromPrimitive, IntoPrimitive)]
+#[cfg(feature = "api-level-29")]
 pub enum OperationCode {
     Add = ffi::OperationCode::ANEURALNETWORKS_ADD.0,
     AveragePool2d = ffi::OperationCode::ANEURALNETWORKS_AVERAGE_POOL_2D.0,
@@ -151,6 +154,7 @@ pub enum OperationCode {
 }
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, TryFromPrimitive, IntoPrimitive)]
+#[cfg(feature = "api-level-29")]
 pub enum PreferenceCode {
     LowPower = ffi::PreferenceCode::ANEURALNETWORKS_PREFER_LOW_POWER.0,
     FastSingleAnswer = ffi::PreferenceCode::ANEURALNETWORKS_PREFER_FAST_SINGLE_ANSWER.0,
@@ -158,6 +162,7 @@ pub enum PreferenceCode {
 }
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, TryFromPrimitive, IntoPrimitive)]
+#[cfg(feature = "api-level-29")]
 pub enum FuseCode {
     None = ffi::FuseCode::ANEURALNETWORKS_FUSED_NONE.0,
     RELU = ffi::FuseCode::ANEURALNETWORKS_FUSED_RELU.0,
@@ -166,12 +171,14 @@ pub enum FuseCode {
 }
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, TryFromPrimitive, IntoPrimitive)]
+#[cfg(feature = "api-level-29")]
 pub enum PaddingCode {
     Same = ffi::PaddingCode::ANEURALNETWORKS_PADDING_SAME.0,
     Valid = ffi::PaddingCode::ANEURALNETWORKS_PADDING_VALID.0,
 }
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, TryFromPrimitive, IntoPrimitive)]
+#[cfg(feature = "api-level-29")]
 pub enum DeviceTypeCode {
     Unknown = ffi::DeviceTypeCode::ANEURALNETWORKS_DEVICE_UNKNOWN.0,
     Other = ffi::DeviceTypeCode::ANEURALNETWORKS_DEVICE_OTHER.0,
@@ -181,6 +188,7 @@ pub enum DeviceTypeCode {
 }
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, TryFromPrimitive, IntoPrimitive)]
+#[cfg(feature = "api-level-29")]
 pub enum FeatureLevelCode {
     Level1 = ffi::FeatureLevelCode::ANEURALNETWORKS_FEATURE_LEVEL_1.0,
     Level2 = ffi::FeatureLevelCode::ANEURALNETWORKS_FEATURE_LEVEL_2.0,
@@ -211,6 +219,7 @@ enum ResultCodeBind {
     DeadObject = ffi::ResultCode::ANEURALNETWORKS_DEAD_OBJECT.0,
 }
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[cfg(feature = "api-level-29")]
 pub enum ResultCode {
     NoError,
     OutOfMemory,
@@ -232,6 +241,7 @@ pub enum ResultCode {
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, TryFromPrimitive, IntoPrimitive)]
+#[cfg(feature = "api-level-29")]
 pub enum DurationCode {
     DurationOnHardware = ffi::DurationCode::ANEURALNETWORKS_DURATION_ON_HARDWARE.0,
     DurationInDriver = ffi::DurationCode::ANEURALNETWORKS_DURATION_IN_DRIVER.0,
@@ -240,6 +250,7 @@ pub enum DurationCode {
 }
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, TryFromPrimitive, IntoPrimitive)]
+#[cfg(feature = "api-level-29")]
 pub enum PriorityCode {
     Low = ffi::PriorityCode::ANEURALNETWORKS_PRIORITY_LOW.0,
     Medium = ffi::PriorityCode::ANEURALNETWORKS_PRIORITY_MEDIUM.0,
@@ -283,11 +294,13 @@ impl Into<ResultCode> for ResultCodeBind {
 }
 
 #[derive(Debug)]
+#[cfg(feature = "api-level-29")]
 pub struct NeuralNetworksCompilation {
     inner: NonNull<ffi::ANeuralNetworksCompilation>,
 }
 
 impl NeuralNetworksCompilation {
+    #[cfg(feature = "api-level-29")]
     pub fn new(model: &NeuralNetworksModel) -> Result<Self, ResultCode> {
         let mut compilation_ptr = std::ptr::null_mut();
         let result = unsafe {
@@ -303,6 +316,7 @@ impl NeuralNetworksCompilation {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn set_preference(&mut self, preference: PreferenceCode) -> Result<(), ResultCode> {
         let result = unsafe {
             ffi::ANeuralNetworksCompilation_setPreference(self.inner.as_ptr(), preference as i32)
@@ -315,6 +329,7 @@ impl NeuralNetworksCompilation {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn finish(&mut self) -> Result<(), ResultCode> {
         let result = unsafe { ffi::ANeuralNetworksCompilation_finish(self.inner.as_ptr()) };
 
@@ -325,6 +340,7 @@ impl NeuralNetworksCompilation {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn set_priority(&mut self, priority: PriorityCode) -> Result<(), ResultCode> {
         let result = unsafe {
             ffi::ANeuralNetworksCompilation_setPriority(self.inner.as_ptr(), priority as i32)
@@ -337,6 +353,7 @@ impl NeuralNetworksCompilation {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn set_timeout(&mut self, duration: u64) -> Result<(), ResultCode> {
         let result =
             unsafe { ffi::ANeuralNetworksCompilation_setTimeout(self.inner.as_ptr(), duration) };
@@ -348,6 +365,7 @@ impl NeuralNetworksCompilation {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn get_preferred_memory_alignment_for_input(&self, index: u32) -> Result<u32, ResultCode> {
         let mut alignment = 0;
         let result = unsafe {
@@ -365,6 +383,7 @@ impl NeuralNetworksCompilation {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn get_preferred_memory_padding_for_input(&self, index: u32) -> Result<u32, ResultCode> {
         let mut padding = 0;
         let result = unsafe {
@@ -382,6 +401,7 @@ impl NeuralNetworksCompilation {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn get_preferred_memory_alignment_for_output(&self, index: u32) -> Result<u32, ResultCode> {
         let mut alignment = 0;
         let result = unsafe {
@@ -399,6 +419,7 @@ impl NeuralNetworksCompilation {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn get_preferred_memory_padding_for_output(&self, index: u32) -> Result<u32, ResultCode> {
         let mut padding = 0;
         let result = unsafe {
@@ -416,6 +437,7 @@ impl NeuralNetworksCompilation {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn create_for_devices(
         model: &NeuralNetworksModel,
         devices: &[&NeuralNetworksDevice],
@@ -446,6 +468,7 @@ impl NeuralNetworksCompilation {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn set_caching(&mut self, cache_dir: &str, token: &[u8; 32]) -> Result<(), ResultCode> {
         let cache_dir_cstr = std::ffi::CString::new(cache_dir).unwrap();
         let result = unsafe {
@@ -471,11 +494,13 @@ impl Drop for NeuralNetworksCompilation {
 }
 
 #[derive(Debug)]
+#[cfg(feature = "api-level-29")]
 pub struct NeuralNetworksBurst {
     inner: NonNull<ffi::ANeuralNetworksBurst>,
 }
 
 impl NeuralNetworksBurst {
+    #[cfg(feature = "api-level-29")]
     pub fn new(compilation: &NeuralNetworksCompilation) -> Result<Self, ResultCode> {
         let mut burst_ptr = std::ptr::null_mut();
         let result =
@@ -498,11 +523,13 @@ impl Drop for NeuralNetworksBurst {
 }
 
 #[derive(Debug, Clone)]
+#[cfg(feature = "api-level-29")]
 pub struct NeuralNetworksOperandType {
     inner: NonNull<ffi::ANeuralNetworksOperandType>,
 }
 
 impl NeuralNetworksOperandType {
+    #[cfg(feature = "api-level-29")]
     pub fn new(
         type_: OperandCode,
         dimension_count: u32,
@@ -531,11 +558,13 @@ impl Drop for NeuralNetworksOperandType {
 }
 
 #[derive(Debug)]
+#[cfg(feature = "api-level-29")]
 pub struct NeuralNetworksDevice {
     inner: NonNull<ffi::ANeuralNetworksDevice>,
 }
 
 impl NeuralNetworksDevice {
+    #[cfg(feature = "api-level-29")]
     pub fn get_name(&self) -> Result<&str, ResultCode> {
         let mut name_ptr = std::ptr::null();
         let result =
@@ -549,6 +578,7 @@ impl NeuralNetworksDevice {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn get_type(&self) -> Result<DeviceTypeCode, ResultCode> {
         let mut type_code = 0;
         let result =
@@ -561,6 +591,7 @@ impl NeuralNetworksDevice {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn get_version(&self) -> Result<&str, ResultCode> {
         let mut version_ptr = std::ptr::null();
         let result =
@@ -574,6 +605,7 @@ impl NeuralNetworksDevice {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn get_feature_level(&self) -> Result<FeatureLevelCode, ResultCode> {
         let mut feature_level = 0;
         let result = unsafe {
@@ -587,6 +619,7 @@ impl NeuralNetworksDevice {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn wait(&self) -> Result<(), ResultCode> {
         let result = unsafe { ffi::ANeuralNetworksDevice_wait(self.inner.as_ptr()) };
 
@@ -598,11 +631,13 @@ impl NeuralNetworksDevice {
     }
 }
 #[derive(Debug)]
+#[cfg(feature = "api-level-29")]
 pub struct NeuralNetworksModel {
     inner: NonNull<ffi::ANeuralNetworksModel>,
 }
 
 impl NeuralNetworksModel {
+    #[cfg(feature = "api-level-29")]
     pub fn create() -> Result<Self, ResultCode> {
         let mut model_ptr = std::ptr::null_mut();
         let result = unsafe { ffi::ANeuralNetworksModel_create(&mut model_ptr) };
@@ -616,6 +651,7 @@ impl NeuralNetworksModel {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn finish(&mut self) -> Result<(), ResultCode> {
         let result = unsafe { ffi::ANeuralNetworksModel_finish(self.inner.as_ptr()) };
 
@@ -626,6 +662,7 @@ impl NeuralNetworksModel {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn add_operand(
         &mut self,
         operand_type: &NeuralNetworksOperandType,
@@ -641,6 +678,7 @@ impl NeuralNetworksModel {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn set_operand_value<T: BufferData>(
         &mut self,
         index: i32,
@@ -665,6 +703,7 @@ impl NeuralNetworksModel {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn set_operand_symm_per_channel_quant_params(
         &mut self,
         index: i32,
@@ -685,6 +724,7 @@ impl NeuralNetworksModel {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn set_operand_value_from_memory(
         &mut self,
         index: i32,
@@ -709,6 +749,7 @@ impl NeuralNetworksModel {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn set_operand_value_from_model(
         &mut self,
         index: i32,
@@ -729,6 +770,7 @@ impl NeuralNetworksModel {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn add_operation(
         &mut self,
         operation_type: OperationCode,
@@ -755,6 +797,7 @@ impl NeuralNetworksModel {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn identify_inputs_and_outputs(
         &mut self,
         input_count: u32,
@@ -779,6 +822,7 @@ impl NeuralNetworksModel {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn relax_computation_float32_to_float16(&mut self, allow: bool) -> Result<(), ResultCode> {
         let result = unsafe {
             ffi::ANeuralNetworksModel_relaxComputationFloat32toFloat16(self.inner.as_ptr(), allow)
@@ -791,6 +835,7 @@ impl NeuralNetworksModel {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn get_supported_operations_for_devices(
         &self,
         devices: &[&NeuralNetworksDevice],
@@ -827,11 +872,13 @@ impl Drop for NeuralNetworksModel {
 }
 
 #[derive(Debug)]
+#[cfg(feature = "api-level-29")]
 pub struct NeuralNetworksExecution {
     inner: NonNull<ffi::ANeuralNetworksExecution>,
 }
 
 impl NeuralNetworksExecution {
+    #[cfg(feature = "api-level-29")]
     pub fn new(compilation: &NeuralNetworksCompilation) -> Result<Self, ResultCode> {
         let mut execution_ptr = std::ptr::null_mut();
         let result = unsafe {
@@ -847,6 +894,7 @@ impl NeuralNetworksExecution {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn set_input(
         &mut self,
         index: i32,
@@ -869,6 +917,7 @@ impl NeuralNetworksExecution {
             Ok(())
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn set_input_from_memory(
         &mut self,
         index: i32,
@@ -893,6 +942,7 @@ impl NeuralNetworksExecution {
             Ok(())
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn set_output(
         &mut self,
         index: i32,
@@ -915,6 +965,7 @@ impl NeuralNetworksExecution {
             Ok(())
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn set_output_from_memory(
         &mut self,
         index: i32,
@@ -939,6 +990,7 @@ impl NeuralNetworksExecution {
             Ok(())
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn start_compute(&mut self) -> Result<NeuralNetworksEvent, ResultCode> {
         let mut event_ptr = std::ptr::null_mut();
         let result = unsafe {
@@ -952,6 +1004,7 @@ impl NeuralNetworksExecution {
             })
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn set_timeout(&mut self, duration: u64) -> Result<(), ResultCode> {
         let result =
             unsafe { ffi::ANeuralNetworksExecution_setTimeout(self.inner.as_ptr(), duration) };
@@ -961,6 +1014,7 @@ impl NeuralNetworksExecution {
             Ok(())
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn set_loop_timeout(&mut self, duration: u64) -> Result<(), ResultCode> {
         let result =
             unsafe { ffi::ANeuralNetworksExecution_setLoopTimeout(self.inner.as_ptr(), duration) };
@@ -970,6 +1024,7 @@ impl NeuralNetworksExecution {
             Ok(())
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn start_compute_with_dependencies(
         &mut self,
         dependencies: &[&NeuralNetworksEvent],
@@ -1000,6 +1055,7 @@ impl NeuralNetworksExecution {
             })
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn enable_input_and_output_padding(&mut self, enable: bool) -> Result<(), ResultCode> {
         let result = unsafe {
             ffi::ANeuralNetworksExecution_enableInputAndOutputPadding(self.inner.as_ptr(), enable)
@@ -1010,6 +1066,7 @@ impl NeuralNetworksExecution {
             Ok(())
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn set_reusable(&mut self, reusable: bool) -> Result<(), ResultCode> {
         let result =
             unsafe { ffi::ANeuralNetworksExecution_setReusable(self.inner.as_ptr(), reusable) };
@@ -1019,6 +1076,7 @@ impl NeuralNetworksExecution {
             Ok(())
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn compute(&mut self) -> Result<(), ResultCode> {
         let result = unsafe { ffi::ANeuralNetworksExecution_compute(self.inner.as_ptr()) };
         if result != 0 {
@@ -1027,6 +1085,7 @@ impl NeuralNetworksExecution {
             Ok(())
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn get_output_operand_rank(&mut self, index: i32) -> Result<u32, ResultCode> {
         let mut rank = 0;
         let result = unsafe {
@@ -1042,6 +1101,7 @@ impl NeuralNetworksExecution {
             Ok(rank)
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn get_output_operand_dimensions(&mut self, index: i32) -> Result<Vec<u32>, ResultCode> {
         let rank = self.get_output_operand_rank(index)?;
         let mut dimensions = vec![0; rank as usize];
@@ -1058,6 +1118,7 @@ impl NeuralNetworksExecution {
             Ok(dimensions)
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn burst_compute(&mut self, burst: &mut NeuralNetworksBurst) -> Result<(), ResultCode> {
         let result = unsafe {
             ffi::ANeuralNetworksExecution_burstCompute(self.inner.as_ptr(), burst.inner.as_ptr())
@@ -1068,6 +1129,7 @@ impl NeuralNetworksExecution {
             Ok(())
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn set_measure_timing(&mut self, measure: bool) -> Result<(), ResultCode> {
         let result =
             unsafe { ffi::ANeuralNetworksExecution_setMeasureTiming(self.inner.as_ptr(), measure) };
@@ -1077,6 +1139,7 @@ impl NeuralNetworksExecution {
             Ok(())
         }
     }
+    #[cfg(feature = "api-level-29")]
     pub fn get_duration(&self, duration_code: i32) -> Result<u64, ResultCode> {
         let mut duration = 0;
         let result = unsafe {
@@ -1101,11 +1164,13 @@ impl Drop for NeuralNetworksExecution {
 }
 
 #[derive(Debug)]
+#[cfg(feature = "api-level-29")]
 pub struct NeuralNetworksEvent {
     inner: NonNull<ffi::ANeuralNetworksEvent>,
 }
 
 impl NeuralNetworksEvent {
+    #[cfg(feature = "api-level-29")]
     pub fn wait(&self) -> Result<(), ResultCode> {
         let result = unsafe { ffi::ANeuralNetworksEvent_wait(self.inner.as_ptr()) };
 
@@ -1116,6 +1181,7 @@ impl NeuralNetworksEvent {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn create_from_sync_fence_fd(sync_fence_fd: i32) -> Result<Self, ResultCode> {
         let mut event = std::ptr::null_mut();
         let result =
@@ -1130,6 +1196,7 @@ impl NeuralNetworksEvent {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn get_sync_fence_fd(&self) -> Result<i32, ResultCode> {
         let mut sync_fence_fd = 0;
         let result = unsafe {
@@ -1151,11 +1218,13 @@ impl Drop for NeuralNetworksEvent {
 }
 
 #[derive(Debug)]
+#[cfg(feature = "api-level-29")]
 pub struct NeuralNetworksMemory {
     inner: NonNull<ffi::ANeuralNetworksMemory>,
 }
 
 impl NeuralNetworksMemory {
+    #[cfg(feature = "api-level-29")]
     pub fn create_from_desc(desc: &NeuralNetworksMemoryDesc) -> Result<Self, ResultCode> {
         let mut memory_ptr = std::ptr::null_mut();
         let result = unsafe {
@@ -1171,6 +1240,7 @@ impl NeuralNetworksMemory {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn copy(src: &NeuralNetworksMemory, dst: &NeuralNetworksMemory) -> Result<(), ResultCode> {
         let result =
             unsafe { ffi::ANeuralNetworksMemory_copy(src.inner.as_ptr(), dst.inner.as_ptr()) };
@@ -1182,6 +1252,7 @@ impl NeuralNetworksMemory {
         }
     }
     #[cfg(feature = "api-level-26")]
+    #[cfg(feature = "api-level-29")]
     pub fn create_from_hardware_buffer(
         hardware_buffer: &HardwareBuffer,
     ) -> Result<Self, ResultCode> {
@@ -1210,11 +1281,13 @@ impl Drop for NeuralNetworksMemory {
 }
 
 #[derive(Debug)]
+#[cfg(feature = "api-level-29")]
 pub struct NeuralNetworksMemoryDesc {
     inner: NonNull<ffi::ANeuralNetworksMemoryDesc>,
 }
 
 impl NeuralNetworksMemoryDesc {
+    #[cfg(feature = "api-level-29")]
     pub fn new() -> Result<Self, ResultCode> {
         let mut desc_ptr = std::ptr::null_mut();
         let result = unsafe { ffi::ANeuralNetworksMemoryDesc_create(&mut desc_ptr) };
@@ -1228,6 +1301,7 @@ impl NeuralNetworksMemoryDesc {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn add_input_role(
         &mut self,
         compilation: &NeuralNetworksCompilation,
@@ -1250,6 +1324,7 @@ impl NeuralNetworksMemoryDesc {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn add_output_role(
         &mut self,
         compilation: &NeuralNetworksCompilation,
@@ -1272,6 +1347,7 @@ impl NeuralNetworksMemoryDesc {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn set_dimensions(&mut self, rank: u32, dimensions: &[u32]) -> Result<(), ResultCode> {
         let result = unsafe {
             ffi::ANeuralNetworksMemoryDesc_setDimensions(
@@ -1288,6 +1364,7 @@ impl NeuralNetworksMemoryDesc {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn finish(&mut self) -> Result<(), ResultCode> {
         let result = unsafe { ffi::ANeuralNetworksMemoryDesc_finish(self.inner.as_ptr()) };
 
@@ -1306,11 +1383,13 @@ impl Drop for NeuralNetworksMemoryDesc {
 }
 
 #[derive(Debug, Clone)]
+#[cfg(feature = "api-level-29")]
 pub struct NeuralNetworksSymmPerChannelQuantParams {
     inner: NonNull<ffi::ANeuralNetworksSymmPerChannelQuantParams>,
 }
 
 impl NeuralNetworksSymmPerChannelQuantParams {
+    #[cfg(feature = "api-level-29")]
     pub fn new(channel_dim: u32, scales: &[f32]) -> Self {
         let mut result = ffi::ANeuralNetworksSymmPerChannelQuantParams {
             channelDim: channel_dim,
@@ -1330,17 +1409,21 @@ impl Drop for NeuralNetworksSymmPerChannelQuantParams {
     }
 }
 #[derive(Debug)]
+#[cfg(feature = "api-level-29")]
 pub struct NeuralNetworks;
 
 impl NeuralNetworks {
+    #[cfg(feature = "api-level-29")]
     pub fn get_default_loop_timeout() -> u64 {
         unsafe { ffi::ANeuralNetworks_getDefaultLoopTimeout() }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn get_maximum_loop_timeout() -> u64 {
         unsafe { ffi::ANeuralNetworks_getMaximumLoopTimeout() }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn get_device_count() -> Result<u32, ResultCode> {
         let mut num_devices = 0;
         let result = unsafe { ffi::ANeuralNetworks_getDeviceCount(&mut num_devices) };
@@ -1352,6 +1435,7 @@ impl NeuralNetworks {
         }
     }
 
+    #[cfg(feature = "api-level-29")]
     pub fn get_device(dev_index: u32) -> Result<NeuralNetworksDevice, ResultCode> {
         let mut device_ptr = std::ptr::null_mut();
         let result = unsafe { ffi::ANeuralNetworks_getDevice(dev_index, &mut device_ptr) };

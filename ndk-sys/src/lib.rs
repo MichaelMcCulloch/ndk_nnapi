@@ -51,3 +51,6 @@ extern "C" {}
 #[cfg(all(feature = "audio", target_os = "android"))]
 #[link(name = "aaudio")]
 extern "C" {}
+#[cfg(all(feature = "neural", target_os = "android"))]
+#[link(name = "neuralnetworks")]
+extern "C" {}
